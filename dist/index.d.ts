@@ -1,8 +1,10 @@
 import { PlayerAchievements, PlayerBadges, PlayerBans, PlayerServers, PlayerStats, PlayerSummary, Friend, Game, RecentGame, Server, App } from './structures';
-export declare class SteamAPI {
+export default class SteamAPI {
     key: string;
+    partnerAPI: string;
     baseAPI: string;
     baseStore: string;
+    api: string;
     headers: {
         'User-Agent': string;
     };
@@ -10,6 +12,7 @@ export declare class SteamAPI {
         enabled: boolean;
         expires: number;
         disableWarnings: boolean;
+        partnerApi: boolean;
     };
     resolveCache: Map<any, any>;
     cache: Map<any, any>;
@@ -21,10 +24,11 @@ export declare class SteamAPI {
      * @param {number} [options.expires=86400000] How long cache should last for in ms (1 day by default)
      * @param {boolean} [options.disableWarnings=false] Whether to suppress warnings
      */
-    constructor(key: string, { enabled, expires, disableWarnings }?: {
+    constructor(key: string, { enabled, expires, disableWarnings, partnerApi }?: {
         enabled?: boolean;
         expires?: number;
         disableWarnings?: boolean;
+        partnerApi?: boolean;
     });
     /**
      * Prints a warning
@@ -36,7 +40,7 @@ export declare class SteamAPI {
     /**
      * Get custom path that isn't in SteamAPI.
      * @param {string} path Path to request e.g '/IPlayerService/GetOwnedGames/v1?steamid=76561198378422474'
-     * @param {string} [base=this.baseAPI] Base URL
+     * @param {string} [base=this.api] Base URL
      * @param {string} [key=this.key] The key to use
      * @returns {Promise<Object>} JSON Response
      */
@@ -65,36 +69,36 @@ export declare class SteamAPI {
     getFeaturedGames(): Promise<object>;
     /**
      * Get achievements for app id.
-     * @param {string} app App ID
+     * @param {number} app App ID
      * @returns {Promise<Object>} App achievements for ID
      */
-    getGameAchievements(app: string): Promise<object>;
+    getGameAchievements(app: number): Promise<object>;
     /**
      * Get details for app id.
      * <warn>Requests for this endpoint are limited to 200 every 5 minutes</warn>
-     * @param {string} app App ID
+     * @param {number} app App ID
      * @param {boolean} [force=false] Overwrite cache
      * @returns {Promise<Object>} App details for ID
      */
-    getGameDetails(app: string, force?: boolean): Promise<object>;
+    getGameDetails(app: number, force?: boolean): Promise<object>;
     /**
      * Get news for app id.
-     * @param {string} app App ID
+     * @param {number} app App ID
      * @returns {Promise<Object[]>} App news for ID
      */
-    getGameNews(app: string): Promise<object[]>;
+    getGameNews(app: number): Promise<object[]>;
     /**
      * Get number of current players for app id.
-     * @param {string} app App ID
+     * @param {number} app App ID
      * @returns {Promise<number>} Number of players
      */
-    getGamePlayers(app: string): Promise<number>;
+    getGamePlayers(app: number): Promise<number>;
     /**
      * Get schema for app id.
-     * @param {string} app App ID
+     * @param {number} app App ID
      * @returns {Promise<Object>} Schema
      */
-    getGameSchema(app: string): Promise<object>;
+    getGameSchema(app: number): Promise<object>;
     /**
      * Get every server associated with host.
      * @param {string} host Host to request
@@ -103,53 +107,53 @@ export declare class SteamAPI {
     getServers(host: string): Promise<Server[]>;
     /**
      * Get users achievements for app id.
-     * @param {string} id User ID
-     * @param {string} app App ID
+     * @param {number} id User ID
+     * @param {number} app App ID
      * @returns {Promise<PlayerAchievements>} Achievements
      */
-    getUserAchievements(id: string, app: string): Promise<PlayerAchievements>;
+    getUserAchievements(id: number, app: number): Promise<PlayerAchievements>;
     /**
      * Get users badges.
      * @param {string} id User ID
      * @returns {Promise<PlayerBadges>} Badges
      */
-    getUserBadges(id: string): Promise<PlayerBadges>;
+    getUserBadges(id: number): Promise<PlayerBadges>;
     /**
      * Get users bans.
-     * @param {string|string[]} id User ID(s)
+     * @param {number|number[]} id User ID(s)
      * @returns {Promise<PlayerBans|PlayerBans[]>} Ban info
      */
-    getUserBans(id: string | string[]): Promise<PlayerBans | PlayerBans[]>;
+    getUserBans(id: number | number[]): Promise<PlayerBans | PlayerBans[]>;
     /**
      * Get users friends.
-     * @param {string} id User ID
+     * @param {number} id User ID
      * @returns {Promise<Friend[]>} Friends
      */
-    getUserFriends(id: string): Promise<Friend[]>;
+    getUserFriends(id: number): Promise<Friend[]>;
     /**
      * Get users groups.
      * @param {string} id User ID
      * @returns {Promise<string[]>} Groups
      */
-    getUserGroups(id: string): Promise<string[]>;
+    getUserGroups(id: number): Promise<string[]>;
     /**
      * Get users level.
-     * @param {string} id User ID
+     * @param {number} id User ID
      * @returns {Promise<number>} Level
      */
-    getUserLevel(id: string): Promise<number>;
+    getUserLevel(id: number): Promise<number>;
     /**
      * Get users owned games.
-     * @param {string} id User ID
+     * @param {number} id User ID
      * @returns {Promise<Game[]>} Owned games
      */
-    getUserOwnedGames(id: string): Promise<Game[]>;
+    getUserOwnedGames(id: number): Promise<Game[]>;
     /**
      * Get users recent games.
-     * @param {string} id User ID
+     * @param {number} id User ID
      * @returns {Promise<RecentGame[]>} Recent games
      */
-    getUserRecentGames(id: string): Promise<RecentGame[]>;
+    getUserRecentGames(id: number): Promise<RecentGame[]>;
     /**
      * Gets servers on steamcommunity.com/dev/managegameservers using your key or provided key.
      * @param {boolean} [hide=false] Hide deleted/expired servers
@@ -159,15 +163,15 @@ export declare class SteamAPI {
     getUserServers(hide: boolean, key: string): Promise<PlayerServers>;
     /**
      * Get users stats for app id.
-     * @param {string} id User ID
-     * @param {string} app App ID
+     * @param {number} id User ID
+     * @param {number} app App ID
      * @returns {Promise<PlayerStats>} Stats for app id
      */
-    getUserStats(id: string, app: string): Promise<PlayerStats>;
+    getUserStats(id: number, app: number): Promise<PlayerStats>;
     /**
      * Get users summary.
-     * @param {string} id User ID
+     * @param {number} id User ID
      * @returns {Promise<PlayerSummary>} Summary
      */
-    getUserSummary(id: string | string[]): Promise<PlayerSummary>;
+    getUserSummary(id: number | number[]): Promise<PlayerSummary>;
 }

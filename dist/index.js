@@ -7,8 +7,6 @@ const structures_1 = require("./structures");
 const objectify_1 = __importDefault(require("./utils/objectify"));
 const fetch_1 = __importDefault(require("./utils/fetch"));
 const { version, name } = require('../package.json');
-const reApp = /^\d{1,6}$/;
-const reID = /^\d{17}$/;
 const reProfileBase = String.raw `(?:(?:(?:(?:https?)?:\/\/)?(?:www\.)?steamcommunity\.com)?)?\/?`;
 const reProfileURL = RegExp(String.raw `${reProfileBase}(?:profiles\/)?(\d{17})`, 'i');
 const reProfileID = RegExp(String.raw `${reProfileBase}(?:id\/)?(\w{2,32})`, 'i');
@@ -22,15 +20,17 @@ class SteamAPI {
      * @param {number} [options.expires=86400000] How long cache should last for in ms (1 day by default)
      * @param {boolean} [options.disableWarnings=false] Whether to suppress warnings
      */
-    constructor(key, { enabled = true, expires = 86400000, disableWarnings = false } = {}) {
+    constructor(key, { enabled = true, expires = 86400000, disableWarnings = false, partnerApi = false } = {}) {
         this.key = key;
+        this.partnerAPI = 'https://partner.steam-api.com/';
         this.baseAPI = 'https://api.steampowered.com';
         this.baseStore = 'https://store.steampowered.com/api';
         this.headers = { 'User-Agent': `SteamAPI/${version} (https://www.npmjs.com/package/${name})` };
-        this.options = { enabled: true, expires: 8640000, disableWarnings: false };
+        this.options = { enabled: true, expires: 8640000, disableWarnings: false, partnerApi: false };
         this.resolveCache = new Map();
         this.cache = null;
-        this.options = { enabled, expires, disableWarnings };
+        this.options = { enabled, expires, disableWarnings, partnerApi };
+        this.api = partnerApi ? this.partnerAPI : this.baseAPI;
         this.resolveCache = new Map();
         if (enabled)
             this.cache = new Map();
@@ -51,11 +51,11 @@ class SteamAPI {
     /**
      * Get custom path that isn't in SteamAPI.
      * @param {string} path Path to request e.g '/IPlayerService/GetOwnedGames/v1?steamid=76561198378422474'
-     * @param {string} [base=this.baseAPI] Base URL
+     * @param {string} [base=this.api] Base URL
      * @param {string} [key=this.key] The key to use
      * @returns {Promise<Object>} JSON Response
      */
-    get(path, base = this.baseAPI, key = this.key) {
+    get(path, base = this.api, key = this.key) {
         return fetch_1.default(`${base}${path}${path.includes('?') ? '&' : '?'}key=${key}`, this.headers);
     }
     /**
@@ -110,11 +110,11 @@ class SteamAPI {
     }
     /**
      * Get achievements for app id.
-     * @param {string} app App ID
+     * @param {number} app App ID
      * @returns {Promise<Object>} App achievements for ID
      */
     getGameAchievements(app) {
-        if (!reApp.test(app))
+        if (!app)
             return Promise.reject(new TypeError('Invalid/no app provided'));
         return this
             .get(`/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2?gameid=${app}`)
@@ -123,12 +123,12 @@ class SteamAPI {
     /**
      * Get details for app id.
      * <warn>Requests for this endpoint are limited to 200 every 5 minutes</warn>
-     * @param {string} app App ID
+     * @param {number} app App ID
      * @param {boolean} [force=false] Overwrite cache
      * @returns {Promise<Object>} App details for ID
      */
     getGameDetails(app, force = false) {
-        if (!reApp.test(app))
+        if (!app)
             return Promise.reject(TypeError('Invalid/no app provided'));
         const request = () => this
             .get(`/appdetails?appids=${app}`, this.baseStore)
@@ -143,11 +143,11 @@ class SteamAPI {
     }
     /**
      * Get news for app id.
-     * @param {string} app App ID
+     * @param {number} app App ID
      * @returns {Promise<Object[]>} App news for ID
      */
     getGameNews(app) {
-        if (!reApp.test(app))
+        if (!app)
             return Promise.reject(new TypeError('Invalid/no app provided'));
         return this
             .get(`/ISteamNews/GetNewsForApp/v2?appid=${app}`)
@@ -155,11 +155,11 @@ class SteamAPI {
     }
     /**
      * Get number of current players for app id.
-     * @param {string} app App ID
+     * @param {number} app App ID
      * @returns {Promise<number>} Number of players
      */
     getGamePlayers(app) {
-        if (!reApp.test(app))
+        if (!app)
             return Promise.reject(new TypeError('Invalid/no app provided'));
         return this
             .get(`/ISteamUserStats/GetNumberOfCurrentPlayers/v1?appid=${app}`)
@@ -167,11 +167,11 @@ class SteamAPI {
     }
     /**
      * Get schema for app id.
-     * @param {string} app App ID
+     * @param {number} app App ID
      * @returns {Promise<Object>} Schema
      */
     getGameSchema(app) {
-        if (!reApp.test(app))
+        if (!app)
             return Promise.reject(new TypeError('Invalid/no app provided'));
         return this
             .get(`/ISteamUserStats/GetSchemaForGame/v2?appid=${app}`)
@@ -194,14 +194,14 @@ class SteamAPI {
     }
     /**
      * Get users achievements for app id.
-     * @param {string} id User ID
-     * @param {string} app App ID
+     * @param {number} id User ID
+     * @param {number} app App ID
      * @returns {Promise<PlayerAchievements>} Achievements
      */
     getUserAchievements(id, app) {
-        if (!reID.test(id))
+        if (!id)
             return Promise.reject(new TypeError('Invalid/no id provided'));
-        if (!reApp.test(app))
+        if (!app)
             return Promise.reject(new TypeError('Invalid/no appid provided'));
         return this
             .get(`/ISteamUserStats/GetPlayerAchievements/v1?steamid=${id}&appid=${app}&l=english`)
@@ -215,7 +215,7 @@ class SteamAPI {
      * @returns {Promise<PlayerBadges>} Badges
      */
     getUserBadges(id) {
-        if (!reID.test(id))
+        if (!id)
             return Promise.reject(new TypeError('Invalid/no id provided'));
         return this
             .get(`/IPlayerService/GetBadges/v1?steamid=${id}`)
@@ -223,12 +223,12 @@ class SteamAPI {
     }
     /**
      * Get users bans.
-     * @param {string|string[]} id User ID(s)
+     * @param {number|number[]} id User ID(s)
      * @returns {Promise<PlayerBans|PlayerBans[]>} Ban info
      */
     getUserBans(id) {
         const arr = Array.isArray(id);
-        if ((arr && id.some(i => !reID.test(i))) || (!arr && !reID.test(id)))
+        if (!id)
             return Promise.reject(new TypeError('Invalid/no id provided'));
         return this
             .get(`/ISteamUser/GetPlayerBans/v1?steamids=${id}`)
@@ -240,11 +240,11 @@ class SteamAPI {
     }
     /**
      * Get users friends.
-     * @param {string} id User ID
+     * @param {number} id User ID
      * @returns {Promise<Friend[]>} Friends
      */
     getUserFriends(id) {
-        if (!reID.test(id))
+        if (!id)
             return Promise.reject(new TypeError('Invalid/no id provided'));
         return this
             .get(`/ISteamUser/GetFriendList/v1?steamid=${id}`)
@@ -256,7 +256,7 @@ class SteamAPI {
      * @returns {Promise<string[]>} Groups
      */
     getUserGroups(id) {
-        if (!reID.test(id))
+        if (!id)
             return Promise.reject(new TypeError('Invalid/no id provided'));
         return this
             .get(`/ISteamUser/GetUserGroupList/v1?steamid=${id}`)
@@ -266,11 +266,11 @@ class SteamAPI {
     }
     /**
      * Get users level.
-     * @param {string} id User ID
+     * @param {number} id User ID
      * @returns {Promise<number>} Level
      */
     getUserLevel(id) {
-        if (!reID.test(id))
+        if (!id)
             return Promise.reject(new TypeError('Invalid/no id provided'));
         return this
             .get(`/IPlayerService/GetSteamLevel/v1?steamid=${id}`)
@@ -278,11 +278,11 @@ class SteamAPI {
     }
     /**
      * Get users owned games.
-     * @param {string} id User ID
+     * @param {number} id User ID
      * @returns {Promise<Game[]>} Owned games
      */
     getUserOwnedGames(id) {
-        if (!reID.test(id))
+        if (!id)
             return Promise.reject(new TypeError('Invalid/no id provided'));
         return this
             .get(`/IPlayerService/GetOwnedGames/v1?steamid=${id}&include_appinfo=1`)
@@ -290,11 +290,11 @@ class SteamAPI {
     }
     /**
      * Get users recent games.
-     * @param {string} id User ID
+     * @param {number} id User ID
      * @returns {Promise<RecentGame[]>} Recent games
      */
     getUserRecentGames(id) {
-        if (!reID.test(id))
+        if (!id)
             return Promise.reject(new TypeError('Invalid/no id provided'));
         return this
             .get(`/IPlayerService/GetRecentlyPlayedGames/v1?steamid=${id}`)
@@ -308,19 +308,19 @@ class SteamAPI {
      */
     getUserServers(hide = false, key) {
         return this
-            .get('/IGameServersService/GetAccountList/v1', this.baseAPI, key)
+            .get('/IGameServersService/GetAccountList/v1', this.api, key)
             .then(json => new structures_1.PlayerServers(json.response, hide));
     }
     /**
      * Get users stats for app id.
-     * @param {string} id User ID
-     * @param {string} app App ID
+     * @param {number} id User ID
+     * @param {number} app App ID
      * @returns {Promise<PlayerStats>} Stats for app id
      */
     getUserStats(id, app) {
-        if (!reID.test(id))
+        if (!id)
             return Promise.reject(new TypeError('Invalid/no id provided'));
-        if (!reApp.test(app))
+        if (!app)
             return Promise.reject(new TypeError('Invalid/no app provided'));
         return this
             .get(`/ISteamUserStats/GetUserStatsForGame/v2?steamid=${id}&appid=${app}`)
@@ -328,12 +328,12 @@ class SteamAPI {
     }
     /**
      * Get users summary.
-     * @param {string} id User ID
+     * @param {number} id User ID
      * @returns {Promise<PlayerSummary>} Summary
      */
     getUserSummary(id) {
         const arr = Array.isArray(id);
-        if ((arr && id.some(i => !reID.test(i))) || (!arr && !reID.test(id)))
+        if (!id)
             return Promise.reject(new TypeError('Invalid/no id provided'));
         return this
             .get(`/ISteamUser/GetPlayerSummaries/v2?steamids=${id}`)
@@ -344,4 +344,4 @@ class SteamAPI {
             : Promise.reject(new Error('No players found')));
     }
 }
-exports.SteamAPI = SteamAPI;
+exports.default = SteamAPI;
