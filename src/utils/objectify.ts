@@ -14,7 +14,7 @@
  * @param {string} [boolean=false] Whether or not to convert to boolean
  * @returns {Object} An object consisting of the names and values
 */
-module.exports = (arr, val = 'value', key = 'name', boolean = false) => {
+export default (arr: [{}], val: string = 'value', key: string = 'name', boolean: boolean = false): object => {
 	const object = {};
 	for (const obj of arr)
 		object[obj[key]] = boolean ? Boolean(obj[val]) : obj[val];

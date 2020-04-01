@@ -1,10 +1,10 @@
-const { createDeflate, createGunzip } = require('zlib');
-const { parse } = require('url');
-const https = require('https');
-const http = require('http');
+import { createDeflate, createGunzip } from 'zlib';
+import { parse } from 'url';
+import https from 'https';
+import http from 'http';
 const reg = /<h1>(.*)<\/h1>/;
 
-module.exports = (url, { headers } = {}) => {
+export default (url: string, headers: {} = {}) : Promise<any> => {
 	const fetch = url.startsWith('https') ? https.get : http.get;
 	const options = Object.assign(
 		parse(url),
@@ -16,7 +16,7 @@ module.exports = (url, { headers } = {}) => {
 			const ce = res.headers['content-encoding'];
 
 			let data = '';
-			let op = res;
+			let op: any = res;
 
 			if (ce === 'deflate') res.pipe(op = createDeflate());
 			if (ce === 'gzip') res.pipe(op = createGunzip());

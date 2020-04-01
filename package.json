@@ -1,12 +1,15 @@
 {
 	"author": "xDimGG <dimggyt@gmail.com> (https://dim.codes)",
-	"name": "steamapi",
-	"description": "A nice Steam API wrapper.",
-	"main": "index.js",
-	"version": "2.0.7",
+	"name": "steamapits",
+	"description": "A nice Steam API wrapper in typescript.",
+	"main": "dist/index.js",
+	"version": "3.0.0",
 	"license": "MIT",
 	"eslintConfig": {
 		"extends": "eslint-config-lloti"
+	},
+	"scripts": {
+		"build": "tsc"
 	},
 	"keywords": [
 		"steam",
@@ -24,6 +27,15 @@
 	},
 	"homepage": "https://github.com/xDimGG/node-steamapi#readme",
 	"devDependencies": {
-		"eslint-config-lloti": "github:xDimGG/eslint-config-lloti"
-	}
+		"@types/node": "^13.9.8",
+		"eslint-config-lloti": "github:xDimGG/eslint-config-lloti",
+		"nodemon": "^2.0.2",
+		"source-map-loader": "^0.2.4",
+		"ts-loader": "^6.2.2",
+		"ts-node": "^8.8.1",
+		"typescript": "^3.8.3"
+	},
+	"files": [
+		"lib/**/*"
+	]
 }
