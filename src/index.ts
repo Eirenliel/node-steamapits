@@ -28,7 +28,7 @@ const reProfileID = RegExp(String.raw`${reProfileBase}(?:id\/)?(\w{2,32})`, 'i')
 
 const STATUS_SUCCESS = 1;
 
-class SteamAPI {
+export class SteamAPI {
 	baseAPI = 'https://api.steampowered.com';
 	baseStore = 'https://store.steampowered.com/api';
 	headers = { 'User-Agent': `SteamAPI/${version} (https://www.npmjs.com/package/${name})` };
@@ -389,5 +389,3 @@ class SteamAPI {
 			);
 	}
 }
-
-module.exports = SteamAPI;
