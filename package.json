@@ -3,6 +3,7 @@
 	"name": "steamapits",
 	"description": "A nice Steam API wrapper in typescript.",
 	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"version": "3.0.0",
 	"license": "MIT",
 	"eslintConfig": {
