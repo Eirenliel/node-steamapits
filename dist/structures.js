@@ -253,7 +253,7 @@ class Server {
 exports.Server = Server;
 /**
  * @typedef {App}
- * @property {number} appid The app's ID
+ * @property {string} appid The app's ID
  * @property {string} name The app's name
  */
 class App {

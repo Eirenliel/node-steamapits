@@ -26,8 +26,8 @@ export class Achievement {
 }
 
 export class Badge {
-    appID: number;
-    badgeID: number;
+    appID: string;
+    badgeID: any;
     badgeColor: any;
     borderColor: any;
     communityItemID: any;
@@ -188,7 +188,7 @@ export class Friend extends Player {
 
 export class Game {
     name: string;
-    appID: number;
+    appID: string;
     playTime: any;
     playTime2: any;
     logoURL: string;
@@ -206,7 +206,7 @@ export class Game {
 
 export class GameServer {
 
-    appID: number;
+    appID: string;
     actor: any;
     memo: any;
     token: any;
@@ -266,11 +266,11 @@ export class PlayerSummary extends Player {
     lastLogOff: number;
     nickname: string;
     realName: string;
-    primaryGroupID: number;
-    personaState: any;
-    personaStateFlags: any;
-    commentPermission: any;
-    visibilityState: any;
+    primaryGroupID: string;
+    personaState: number;
+    personaStateFlags: number;
+    commentPermission: number;
+    visibilityState: number;
     countryCode: string;
     stateCode: string;
     cityID: string;
@@ -335,7 +335,7 @@ export class RecentGame extends Game {
 export class Server {
 
     address: any;
-    appID: number;
+    appID: string;
     game: any;
     gmsindex: any;
     lan: any;
@@ -359,10 +359,10 @@ export class Server {
 
 /**
  * @typedef {App}
- * @property {number} appid The app's ID
+ * @property {string} appid The app's ID
  * @property {string} name The app's name
  */
 export class App {
-	constructor(public appid: number, public name: string) {
+	constructor(public appid: string, public name: string) {
     }
 }

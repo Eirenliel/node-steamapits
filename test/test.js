@@ -1,5 +1,9 @@
-const SteamAPI = require('..');
+const { SteamAPI } = require('../dist');
 const { key } = require('./cfg');
+
+console.log('test1');
+
+console.log(SteamAPI);
 const steam = new SteamAPI(key);
 
 const inspect = json => console.dir(json, { depth: null });

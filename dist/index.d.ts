@@ -1,5 +1,5 @@
 import { PlayerAchievements, PlayerBadges, PlayerBans, PlayerServers, PlayerStats, PlayerSummary, Friend, Game, RecentGame, Server, App } from './structures';
-export default class SteamAPI {
+export declare class SteamAPI {
     key: string;
     partnerAPI: string;
     baseAPI: string;
@@ -69,36 +69,36 @@ export default class SteamAPI {
     getFeaturedGames(): Promise<object>;
     /**
      * Get achievements for app id.
-     * @param {number} app App ID
+     * @param {string} app App ID
      * @returns {Promise<Object>} App achievements for ID
      */
-    getGameAchievements(app: number): Promise<object>;
+    getGameAchievements(app: string): Promise<object>;
     /**
      * Get details for app id.
      * <warn>Requests for this endpoint are limited to 200 every 5 minutes</warn>
-     * @param {number} app App ID
+     * @param {string} app App ID
      * @param {boolean} [force=false] Overwrite cache
      * @returns {Promise<Object>} App details for ID
      */
-    getGameDetails(app: number, force?: boolean): Promise<object>;
+    getGameDetails(app: string, force?: boolean): Promise<object>;
     /**
      * Get news for app id.
-     * @param {number} app App ID
+     * @param {string} app App ID
      * @returns {Promise<Object[]>} App news for ID
      */
-    getGameNews(app: number): Promise<object[]>;
+    getGameNews(app: string): Promise<object[]>;
     /**
      * Get number of current players for app id.
-     * @param {number} app App ID
+     * @param {string} app App ID
      * @returns {Promise<number>} Number of players
      */
-    getGamePlayers(app: number): Promise<number>;
+    getGamePlayers(app: string): Promise<number>;
     /**
      * Get schema for app id.
-     * @param {number} app App ID
+     * @param {string} app App ID
      * @returns {Promise<Object>} Schema
      */
-    getGameSchema(app: number): Promise<object>;
+    getGameSchema(app: string): Promise<object>;
     /**
      * Get every server associated with host.
      * @param {string} host Host to request
@@ -107,71 +107,72 @@ export default class SteamAPI {
     getServers(host: string): Promise<Server[]>;
     /**
      * Get users achievements for app id.
-     * @param {number} id User ID
-     * @param {number} app App ID
+     * @param {string} id User ID
+     * @param {string} app App ID
      * @returns {Promise<PlayerAchievements>} Achievements
      */
-    getUserAchievements(id: number, app: number): Promise<PlayerAchievements>;
+    getUserAchievements(id: string, app: string): Promise<PlayerAchievements>;
     /**
      * Get users badges.
      * @param {string} id User ID
      * @returns {Promise<PlayerBadges>} Badges
      */
-    getUserBadges(id: number): Promise<PlayerBadges>;
+    getUserBadges(id: string): Promise<PlayerBadges>;
     /**
      * Get users bans.
-     * @param {number|number[]} id User ID(s)
+     * @param {string|string[]} id User ID(s)
      * @returns {Promise<PlayerBans|PlayerBans[]>} Ban info
      */
-    getUserBans(id: number | number[]): Promise<PlayerBans | PlayerBans[]>;
+    getUserBans(id: string | string[]): Promise<PlayerBans | PlayerBans[]>;
     /**
      * Get users friends.
-     * @param {number} id User ID
+     * @param {string} id User ID
      * @returns {Promise<Friend[]>} Friends
      */
-    getUserFriends(id: number): Promise<Friend[]>;
+    getUserFriends(id: string): Promise<Friend[]>;
     /**
      * Get users groups.
      * @param {string} id User ID
      * @returns {Promise<string[]>} Groups
      */
-    getUserGroups(id: number): Promise<string[]>;
+    getUserGroups(id: string): Promise<string[]>;
     /**
      * Get users level.
-     * @param {number} id User ID
+     * @param {string} id User ID
      * @returns {Promise<number>} Level
      */
-    getUserLevel(id: number): Promise<number>;
+    getUserLevel(id: string): Promise<number>;
     /**
      * Get users owned games.
-     * @param {number} id User ID
+     * @param {string} id User ID
      * @returns {Promise<Game[]>} Owned games
      */
-    getUserOwnedGames(id: number): Promise<Game[]>;
+    getUserOwnedGames(id: string): Promise<Game[]>;
     /**
      * Get users recent games.
-     * @param {number} id User ID
+     * @param {string} id User ID
      * @returns {Promise<RecentGame[]>} Recent games
      */
-    getUserRecentGames(id: number): Promise<RecentGame[]>;
+    getUserRecentGames(id: string): Promise<RecentGame[]>;
     /**
      * Gets servers on steamcommunity.com/dev/managegameservers using your key or provided key.
      * @param {boolean} [hide=false] Hide deleted/expired servers
      * @param {string} [key=this.key] Key
      * @returns {Promise<PlayerServers>} Servers
      */
-    getUserServers(hide: boolean, key: string): Promise<PlayerServers>;
+    getUserServers(hide?: boolean, key?: string): Promise<PlayerServers>;
     /**
      * Get users stats for app id.
-     * @param {number} id User ID
-     * @param {number} app App ID
+     * @param {string} id User ID
+     * @param {string} app App ID
      * @returns {Promise<PlayerStats>} Stats for app id
      */
-    getUserStats(id: number, app: number): Promise<PlayerStats>;
+    getUserStats(id: string, app: string): Promise<PlayerStats>;
     /**
      * Get users summary.
-     * @param {number} id User ID
+     * @param {string} id User ID
      * @returns {Promise<PlayerSummary>} Summary
      */
-    getUserSummary(id: number | number[]): Promise<PlayerSummary>;
+    getUserSummary(id: string | string[]): Promise<PlayerSummary>;
 }
+export default SteamAPI;
