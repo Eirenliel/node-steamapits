@@ -41,7 +41,7 @@ export class SteamAPI {
 	/**
 	 * Sets Steam key for future use.
 	 * @param {string} key Steam key
-	 * @param {Object} [options={}] Optional options for caching and warnings `getGameDetails()`
+	 * @param {any} [options={}] Optional options for caching and warnings `getGameDetails()`
 	 * @param {boolean} [options.enabled=true] Whether caching is enabled
 	 * @param {number} [options.expires=86400000] How long cache should last for in ms (1 day by default)
 	 * @param {boolean} [options.disableWarnings=false] Whether to suppress warnings
@@ -70,7 +70,7 @@ export class SteamAPI {
 	 * @param {string} path Path to request e.g '/IPlayerService/GetOwnedGames/v1?steamid=76561198378422474'
 	 * @param {string} [base=this.api] Base URL
 	 * @param {string} [key=this.key] The key to use
-	 * @returns {Promise<Object>} JSON Response
+	 * @returns {Promise<any>} JSON Response
 	 */
 	get(path: string, base: string = this.api, key: string = this.key): Promise<any> {
 		return fetch(`${base}${path}${path.includes('?') ? '&' : '?'}key=${key}`, this.headers);
@@ -117,9 +117,9 @@ export class SteamAPI {
 
 	/**
 	 * Get featured categories on the steam store.
-	 * @returns {Promise<Object[]>} Featured categories
+	 * @returns {Promise<any[]>} Featured categories
 	 */
-	getFeaturedCategories(): Promise<object[]> {
+	getFeaturedCategories(): Promise<any[]> {
 		return this
 			.get('/featuredcategories', this.baseStore)
 			.then(Object.values);
@@ -127,18 +127,18 @@ export class SteamAPI {
 
 	/**
 	 * Get featured games on the steam store
-	 * @returns {Promise<Object>} Featured games
+	 * @returns {Promise<any>} Featured games
 	 */
-	getFeaturedGames(): Promise<object> {
+	getFeaturedGames(): Promise<any> {
 		return this.get('/featured', this.baseStore);
 	}
 
 	/**
 	 * Get achievements for app id.
 	 * @param {string} app App ID
-	 * @returns {Promise<Object>} App achievements for ID
+	 * @returns {Promise<any>} App achievements for ID
 	 */
-	getGameAchievements(app: string): Promise<object> {
+	getGameAchievements(app: string): Promise<any> {
 		if (!reApp.test(app)) return Promise.reject(new TypeError('Invalid/no app provided'));
 
 		return this
@@ -151,9 +151,9 @@ export class SteamAPI {
 	 * <warn>Requests for this endpoint are limited to 200 every 5 minutes</warn>
 	 * @param {string} app App ID
 	 * @param {boolean} [force=false] Overwrite cache
-	 * @returns {Promise<Object>} App details for ID
+	 * @returns {Promise<any>} App details for ID
 	 */
-	getGameDetails(app: string, force: boolean = false): Promise<object> {
+	getGameDetails(app: string, force: boolean = false): Promise<any> {
 		if (!reApp.test(app)) return Promise.reject(TypeError('Invalid/no app provided'));
 
 		const request = () => this
@@ -175,9 +175,9 @@ export class SteamAPI {
 	/**
 	 * Get news for app id.
 	 * @param {string} app App ID
-	 * @returns {Promise<Object[]>} App news for ID
+	 * @returns {Promise<any[]>} App news for ID
 	 */
-	getGameNews(app: string): Promise<object[]> {
+	getGameNews(app: string): Promise<any[]> {
 		if (!reApp.test(app)) return Promise.reject(new TypeError('Invalid/no app provided'));
 
 		return this
@@ -201,9 +201,9 @@ export class SteamAPI {
 	/**
 	 * Get schema for app id.
 	 * @param {string} app App ID
-	 * @returns {Promise<Object>} Schema
+	 * @returns {Promise<any>} Schema
 	 */
-	getGameSchema(app: string): Promise<object> {
+	getGameSchema(app: string): Promise<any> {
 		if (!reApp.test(app)) return Promise.reject(new TypeError('Invalid/no app provided'));
 
 		return this
