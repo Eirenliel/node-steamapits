@@ -13,7 +13,8 @@ import {
 	GameServer,
 	RecentGame,
 	Server,
-	App
+	App,
+	PlayerAuth
 } from './structures';
 
 import objectify from './utils/objectify';
@@ -45,8 +46,9 @@ export class SteamAPI {
 	 * @param {boolean} [options.enabled=true] Whether caching is enabled
 	 * @param {number} [options.expires=86400000] How long cache should last for in ms (1 day by default)
 	 * @param {boolean} [options.disableWarnings=false] Whether to suppress warnings
+	 * @param {string} appid AppID if using it
 	 */
-	constructor(public key: string, { enabled = true, expires = 86400000, disableWarnings = false, partnerApi = false } = {}) {
+	constructor(public key: string, { enabled = true, expires = 86400000, disableWarnings = false, partnerApi = false } = {}, public appid: string = '') {
 		this.options = { enabled, expires, disableWarnings, partnerApi };
 		this.api = partnerApi ? this.partnerAPI : this.baseAPI;
 		this.resolveCache = new Map();
@@ -390,6 +392,20 @@ export class SteamAPI {
 					: new PlayerSummary(json.response.players[0])
 				: Promise.reject(new Error('No players found'))
 			);
+	}
+
+	/**
+	 * Checks user authentication by ticket. See https://partner.steamgames.com/doc/features/auth#4
+	 * 
+	 * @param ticket - user ticket
+	 * @param app - app to check if user owns it, can user current app id
+	 * @param key - can provide custom key or use current key
+	 */
+	checkUserTicket(ticket: string, app: string = this.appid, key: string = this.key): Promise<PlayerAuth> {
+		return this
+			.get(`/ISteamUserAuth/AuthenticateUserTicket/v1/?appid=${app}&ticket=${ticket}`, this.api, key)
+			.then(json => new PlayerAuth(json.response.params));
+
 	}
 }
 

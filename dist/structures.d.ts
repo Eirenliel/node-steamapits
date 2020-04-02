@@ -185,3 +185,11 @@ export declare class App {
     name: string;
     constructor(appid: string, name: string);
 }
+export declare class PlayerAuth {
+    result: string;
+    steamID: string;
+    ownerSteamID: string;
+    vacBanned: boolean;
+    publisherBanned: boolean;
+    constructor(auth: any);
+}

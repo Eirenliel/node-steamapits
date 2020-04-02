@@ -1,6 +1,7 @@
-import { PlayerAchievements, PlayerBadges, PlayerBans, PlayerServers, PlayerStats, PlayerSummary, Friend, Game, RecentGame, Server, App } from './structures';
+import { PlayerAchievements, PlayerBadges, PlayerBans, PlayerServers, PlayerStats, PlayerSummary, Friend, Game, RecentGame, Server, App, PlayerAuth } from './structures';
 export declare class SteamAPI {
     key: string;
+    appid: string;
     partnerAPI: string;
     baseAPI: string;
     baseStore: string;
@@ -19,17 +20,18 @@ export declare class SteamAPI {
     /**
      * Sets Steam key for future use.
      * @param {string} key Steam key
-     * @param {Object} [options={}] Optional options for caching and warnings `getGameDetails()`
+     * @param {any} [options={}] Optional options for caching and warnings `getGameDetails()`
      * @param {boolean} [options.enabled=true] Whether caching is enabled
      * @param {number} [options.expires=86400000] How long cache should last for in ms (1 day by default)
      * @param {boolean} [options.disableWarnings=false] Whether to suppress warnings
+     * @param {string} appid AppID if using it
      */
     constructor(key: string, { enabled, expires, disableWarnings, partnerApi }?: {
         enabled?: boolean;
         expires?: number;
         disableWarnings?: boolean;
         partnerApi?: boolean;
-    });
+    }, appid?: string);
     /**
      * Prints a warning
      * @param {...any} args Message
@@ -42,7 +44,7 @@ export declare class SteamAPI {
      * @param {string} path Path to request e.g '/IPlayerService/GetOwnedGames/v1?steamid=76561198378422474'
      * @param {string} [base=this.api] Base URL
      * @param {string} [key=this.key] The key to use
-     * @returns {Promise<Object>} JSON Response
+     * @returns {Promise<any>} JSON Response
      */
     get(path: string, base?: string, key?: string): Promise<any>;
     /**
@@ -59,34 +61,34 @@ export declare class SteamAPI {
     getAppList(): Promise<App[]>;
     /**
      * Get featured categories on the steam store.
-     * @returns {Promise<Object[]>} Featured categories
+     * @returns {Promise<any[]>} Featured categories
      */
-    getFeaturedCategories(): Promise<object[]>;
+    getFeaturedCategories(): Promise<any[]>;
     /**
      * Get featured games on the steam store
-     * @returns {Promise<Object>} Featured games
+     * @returns {Promise<any>} Featured games
      */
-    getFeaturedGames(): Promise<object>;
+    getFeaturedGames(): Promise<any>;
     /**
      * Get achievements for app id.
      * @param {string} app App ID
-     * @returns {Promise<Object>} App achievements for ID
+     * @returns {Promise<any>} App achievements for ID
      */
-    getGameAchievements(app: string): Promise<object>;
+    getGameAchievements(app: string): Promise<any>;
     /**
      * Get details for app id.
      * <warn>Requests for this endpoint are limited to 200 every 5 minutes</warn>
      * @param {string} app App ID
      * @param {boolean} [force=false] Overwrite cache
-     * @returns {Promise<Object>} App details for ID
+     * @returns {Promise<any>} App details for ID
      */
-    getGameDetails(app: string, force?: boolean): Promise<object>;
+    getGameDetails(app: string, force?: boolean): Promise<any>;
     /**
      * Get news for app id.
      * @param {string} app App ID
-     * @returns {Promise<Object[]>} App news for ID
+     * @returns {Promise<any[]>} App news for ID
      */
-    getGameNews(app: string): Promise<object[]>;
+    getGameNews(app: string): Promise<any[]>;
     /**
      * Get number of current players for app id.
      * @param {string} app App ID
@@ -96,9 +98,9 @@ export declare class SteamAPI {
     /**
      * Get schema for app id.
      * @param {string} app App ID
-     * @returns {Promise<Object>} Schema
+     * @returns {Promise<any>} Schema
      */
-    getGameSchema(app: string): Promise<object>;
+    getGameSchema(app: string): Promise<any>;
     /**
      * Get every server associated with host.
      * @param {string} host Host to request
@@ -174,5 +176,13 @@ export declare class SteamAPI {
      * @returns {Promise<PlayerSummary>} Summary
      */
     getUserSummary(id: string | string[]): Promise<PlayerSummary>;
+    /**
+     * Checks user authentication by ticket. See https://partner.steamgames.com/doc/features/auth#4
+     *
+     * @param ticket - user ticket
+     * @param app - app to check if user owns it, can user current app id
+     * @param key - can provide custom key or use current key
+     */
+    checkUserTicket(ticket: string, app?: string, key?: string): Promise<PlayerAuth>;
 }
 export default SteamAPI;

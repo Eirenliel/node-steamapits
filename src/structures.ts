@@ -366,3 +366,20 @@ export class App {
 	constructor(public appid: string, public name: string) {
     }
 }
+
+export class PlayerAuth {
+
+	result: string;
+	steamID: string;
+	ownerSteamID: string;
+	vacBanned: boolean;
+	publisherBanned: boolean;
+
+	constructor(auth: any) {
+		this.result = auth.result;
+		this.steamID = auth.steamid;
+		this.ownerSteamID = auth.ownersteamid;
+		this.vacBanned = auth.vacbanned;
+		this.publisherBanned = auth.publisherbanned;
+	}
+}

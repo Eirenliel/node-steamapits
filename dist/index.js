@@ -17,13 +17,15 @@ class SteamAPI {
     /**
      * Sets Steam key for future use.
      * @param {string} key Steam key
-     * @param {Object} [options={}] Optional options for caching and warnings `getGameDetails()`
+     * @param {any} [options={}] Optional options for caching and warnings `getGameDetails()`
      * @param {boolean} [options.enabled=true] Whether caching is enabled
      * @param {number} [options.expires=86400000] How long cache should last for in ms (1 day by default)
      * @param {boolean} [options.disableWarnings=false] Whether to suppress warnings
+     * @param {string} appid AppID if using it
      */
-    constructor(key, { enabled = true, expires = 86400000, disableWarnings = false, partnerApi = false } = {}) {
+    constructor(key, { enabled = true, expires = 86400000, disableWarnings = false, partnerApi = false } = {}, appid = '') {
         this.key = key;
+        this.appid = appid;
         this.partnerAPI = 'https://partner.steam-api.com/';
         this.baseAPI = 'https://api.steampowered.com';
         this.baseStore = 'https://store.steampowered.com/api';
@@ -55,7 +57,7 @@ class SteamAPI {
      * @param {string} path Path to request e.g '/IPlayerService/GetOwnedGames/v1?steamid=76561198378422474'
      * @param {string} [base=this.api] Base URL
      * @param {string} [key=this.key] The key to use
-     * @returns {Promise<Object>} JSON Response
+     * @returns {Promise<any>} JSON Response
      */
     get(path, base = this.api, key = this.key) {
         return fetch_1.default(`${base}${path}${path.includes('?') ? '&' : '?'}key=${key}`, this.headers);
@@ -96,7 +98,7 @@ class SteamAPI {
     }
     /**
      * Get featured categories on the steam store.
-     * @returns {Promise<Object[]>} Featured categories
+     * @returns {Promise<any[]>} Featured categories
      */
     getFeaturedCategories() {
         return this
@@ -105,7 +107,7 @@ class SteamAPI {
     }
     /**
      * Get featured games on the steam store
-     * @returns {Promise<Object>} Featured games
+     * @returns {Promise<any>} Featured games
      */
     getFeaturedGames() {
         return this.get('/featured', this.baseStore);
@@ -113,7 +115,7 @@ class SteamAPI {
     /**
      * Get achievements for app id.
      * @param {string} app App ID
-     * @returns {Promise<Object>} App achievements for ID
+     * @returns {Promise<any>} App achievements for ID
      */
     getGameAchievements(app) {
         if (!reApp.test(app))
@@ -127,7 +129,7 @@ class SteamAPI {
      * <warn>Requests for this endpoint are limited to 200 every 5 minutes</warn>
      * @param {string} app App ID
      * @param {boolean} [force=false] Overwrite cache
-     * @returns {Promise<Object>} App details for ID
+     * @returns {Promise<any>} App details for ID
      */
     getGameDetails(app, force = false) {
         if (!reApp.test(app))
@@ -146,7 +148,7 @@ class SteamAPI {
     /**
      * Get news for app id.
      * @param {string} app App ID
-     * @returns {Promise<Object[]>} App news for ID
+     * @returns {Promise<any[]>} App news for ID
      */
     getGameNews(app) {
         if (!reApp.test(app))
@@ -170,7 +172,7 @@ class SteamAPI {
     /**
      * Get schema for app id.
      * @param {string} app App ID
-     * @returns {Promise<Object>} Schema
+     * @returns {Promise<any>} Schema
      */
     getGameSchema(app) {
         if (!reApp.test(app))
@@ -344,6 +346,18 @@ class SteamAPI {
                 ? json.response.players.map(player => new structures_1.PlayerSummary(player))
                 : new structures_1.PlayerSummary(json.response.players[0])
             : Promise.reject(new Error('No players found')));
+    }
+    /**
+     * Checks user authentication by ticket. See https://partner.steamgames.com/doc/features/auth#4
+     *
+     * @param ticket - user ticket
+     * @param app - app to check if user owns it, can user current app id
+     * @param key - can provide custom key or use current key
+     */
+    checkUserTicket(ticket, app = this.appid, key = this.key) {
+        return this
+            .get(`/ISteamUserAuth/AuthenticateUserTicket/v1/?appid=${app}&ticket=${ticket}`, this.api, key)
+            .then(json => new structures_1.PlayerAuth(json.response.params));
     }
 }
 exports.SteamAPI = SteamAPI;

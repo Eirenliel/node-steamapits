@@ -263,3 +263,13 @@ class App {
     }
 }
 exports.App = App;
+class PlayerAuth {
+    constructor(auth) {
+        this.result = auth.result;
+        this.steamID = auth.steamid;
+        this.ownerSteamID = auth.ownersteamid;
+        this.vacBanned = auth.vacbanned;
+        this.publisherBanned = auth.publisherbanned;
+    }
+}
+exports.PlayerAuth = PlayerAuth;
