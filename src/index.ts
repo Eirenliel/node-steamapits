@@ -404,7 +404,7 @@ export class SteamAPI {
 	checkUserTicket(ticket: string, app: string = this.appid, key: string = this.key): Promise<PlayerAuth> {
 		return this
 			.get(`/ISteamUserAuth/AuthenticateUserTicket/v1/?appid=${app}&ticket=${ticket}`, this.api, key)
-			.then(json => new PlayerAuth(json.response.params));
+			.then(json => json.response?.params ? new PlayerAuth(json.response.params) : null);
 
 	}
 }

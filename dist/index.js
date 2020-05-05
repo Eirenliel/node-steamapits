@@ -357,7 +357,7 @@ class SteamAPI {
     checkUserTicket(ticket, app = this.appid, key = this.key) {
         return this
             .get(`/ISteamUserAuth/AuthenticateUserTicket/v1/?appid=${app}&ticket=${ticket}`, this.api, key)
-            .then(json => new structures_1.PlayerAuth(json.response.params));
+            .then(json => { var _a; return ((_a = json.response) === null || _a === void 0 ? void 0 : _a.params) ? new structures_1.PlayerAuth(json.response.params) : null; });
     }
 }
 exports.SteamAPI = SteamAPI;
